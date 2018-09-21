@@ -20,46 +20,46 @@
 namespace WPIDP;
 
 class Plugin_Config {
- 
+
     // Define the plugin slug
     public static $slug = 'idp-login';
-    
+
     // Define the provider name
     public static $provider_name = 'DJO IDP';
-    
+
     // Define plugin prefix that will be used in DB to help prevent conflicts with similar plugins
     public static $prefix = 'woi_idp';
-    
+
     // Define plugin name
     public static $plugin_name = 'DJO Login';
-    
+
         // Define plugin abbreviation
     public static $abbreviation = 'IDP';
-    
+
     // Define plugin URL
     public static $plugin_url;
-    
+
     // Define authorize URL
     public static $authorize_url = 'https://idp.djoamersfoort.nl/oauth/authorize';
-    
+
     // Define token URL
     public static $token_url = 'https://idp.djoamersfoort.nl/oauth/token';
-    
+
     // Define API Base URL
     public static $base_url = 'https://idp.djoamersfoort.nl/api/primus';
-    
+
     // Define the URL to create OAuth application for this provider
     public static $apps_url = 'https://idp.djoamersfoort.nl/apps/create';
-    
+
     // Define our preferred HTTP authentication method
     public static $http_auth_method = 'POST';
-    
+
     // Define the access token name per the API
     public static $access_token_name = 'access_token';
-    
+
     // The URL at which to retrieve the user profile
     public static $profile_url = 'https://idp.djoamersfoort.nl/api/primus/user/all';
-    
+
     // Parses and returns back profile data
     public static function parse_profile_data($profile_data) {
             $decoded_data = json_decode($profile_data);
@@ -71,7 +71,7 @@ class Plugin_Config {
             // Get first and last name from full name
             // $split_name = self::split_name($decoded_data->result->result->fullName);
 
-	    $is_begeleider = ($decoded_data->result->accountType == 'begeleider');
+            $is_begeleider = ($decoded_data->result->accountType == 'begeleider');
             $lastname = trim($decoded_data->result->middleName . ' ' . $decoded_data->result->lastName);
 
             // Return result
@@ -93,7 +93,7 @@ class Plugin_Config {
                 return array( 'first_name' => '', 'last_name' => '' );
             }
             $first_name = $last_name = '';
-            
+
             $arr = explode(' ', $full_name);
             $num = count($arr);
 

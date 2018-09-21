@@ -42,7 +42,7 @@ if (!class_exists('WP_OAuth_Integration_Client')) {
         public $access_token_expires_in = "";
 
         // Date of access token expiry
-        public $access_token_expires_at = "";        
+        public $access_token_expires_at = "";
 
         // Stores whether to decode JSON response or not
         public $decode_json = false;
@@ -59,7 +59,7 @@ if (!class_exists('WP_OAuth_Integration_Client')) {
         public $curl_useragent = "OAuth/2 Simple PHP Client v0.1; HybridAuth http://hybridauth.sourceforge.net/";
 
         public $curl_proxy = null;
-        
+
         private $provider;
 
         /*

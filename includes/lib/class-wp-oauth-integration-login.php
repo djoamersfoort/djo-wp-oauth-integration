@@ -77,7 +77,7 @@ if (!class_exists('WP_OAuth_Integration_Login')) {
         public function get_auth_url($redirect = false) {
 
             $state = wp_generate_password(12, false);
-            $authorize_url = $this->oauth->authorizeUrl(array('scope' => 'basic',
+            $authorize_url = $this->oauth->authorizeUrl(array('scope' => 'user/basic user/names user/email user/account-type',
                 'state' => $state));
 
             // Store redirect URL in session
@@ -264,17 +264,18 @@ if (!class_exists('WP_OAuth_Integration_Login')) {
                     if( !empty($oauth_profile['last_name']) ){
                         $userdata['last_name'] = $oauth_profile['last_name'];
                         $userdata['display_name'] .= $oauth_profile['last_name'] .' ';
-                    }                
+                    }
                 }
                 if( !empty($oauth_profile['user_url']) ){
                     $userdata['user_url'] = $oauth_profile['user_url'];
                 }
-                
+		$userdata['show_admin_bar_front'] = 'false';
+
                 $user_id = wp_insert_user( $userdata );
-                
+
                 if( is_wp_error( $user_id ) ) {
                         return $user_id->get_error_message();
-                } 
+                }
 
                 // Set the user redirect URL
                 $this->user_redirect = $this->plugin_options['registration_redirect_url'];

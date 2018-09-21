@@ -1,4 +1,10 @@
+Please note that this fork is based on:
+https://wordpress.org/plugins/wp-oauth-integration/
+
+What follows is the original authors readme.
+
 === WP OAuth Integration ===
+
 Contributors: arbet01
 Tags:  OAuth2 Service, oauth2, OAuth provider, Provider, OAuth, OAuth client, Meetup
 Requires at least: 4.9.1

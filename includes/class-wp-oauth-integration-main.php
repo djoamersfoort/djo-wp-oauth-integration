@@ -133,7 +133,8 @@ final class WP_OAuth_Integration_Main {
     * @since 0.1.1
     */
     private function activate_default_provider(){
-            $provider = 'meetup';
+            //$provider = 'meetup';
+            $provider = 'idp';
 
             require_once WOI_ABSPATH . 'includes/wp-'.$provider.'.conf.php';
 

@@ -64,14 +64,7 @@ class Plugin_Config {
     public static function parse_profile_data($profile_data) {
             $decoded_data = json_decode($profile_data);
 
-            //$file = fopen("debug.txt", "w+");
-            //fwrite($file, $profile_data);
-            //fclose($file);
-
-            // Get first and last name from full name
-            // $split_name = self::split_name($decoded_data->result->result->fullName);
-
-            $is_begeleider = ($decoded_data->result->accountType == 'begeleider');
+            $is_begeleider = (strpos($decoded_data->result->accountType, 'begeleider') !== false);
             $lastname = trim($decoded_data->result->middleName . ' ' . $decoded_data->result->lastName);
 
             // Return result

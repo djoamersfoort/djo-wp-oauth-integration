@@ -63,8 +63,9 @@ if (!class_exists('WP_OAuth_Integration_Login')) {
             if (get_current_user_id()) {
                 $this->oauth->access_token = get_user_meta(get_current_user_id(), WP_OAuth_Integration_Factory::get_prefix($this->provider) . '_access_token', true);
             }
-            // Add shortcode for generating OAuth Login URL
+            // Add shortcode for generating OAuth Login and Logout URL
             add_shortcode(WP_OAuth_Integration_Factory::get_prefix($this->provider) . '_login_link', array($this, 'get_login_link'));
+	    add_shortcode(WP_OAuth_Integration_Factory::get_prefix($this->provider) . '_logout_link', array($this, 'get_logout_link'));
 
             // Start session
             if (!session_id()) {
@@ -293,13 +294,18 @@ if (!class_exists('WP_OAuth_Integration_Login')) {
             return false;
         }
 
+        public function get_logout_link($attributes = false) {
+            $logout_text = $this->plugin_options['logged_in_message'];
+            $logout_url = wp_logout_url('/');
+            return "<a href='$logout_url'>$logout_text</a>";
+        }
+
         // Used by shortcode in order to get the login link
         public function get_login_link($attributes = false) {
 
             // Display the logged in message if user is already logged in
             if (is_user_logged_in()) {
-
-                return $this->plugin_options['logged_in_message'];
+                return $this->get_logout_link();
             }
             // extract data from array
             $args = array(

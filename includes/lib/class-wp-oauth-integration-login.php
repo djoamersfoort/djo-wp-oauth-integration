@@ -297,7 +297,7 @@ if (!class_exists('WP_OAuth_Integration_Login')) {
         public function get_logout_link($attributes = false) {
             $logout_text = $this->plugin_options['logged_in_message'];
             $logout_url = wp_logout_url('/');
-            return "<a href='$logout_url'>$logout_text</a>";
+            return "<a href='$logout_url'><span>$logout_text</span></a>";
         }
 
         // Used by shortcode in order to get the login link
@@ -312,14 +312,14 @@ if (!class_exists('WP_OAuth_Integration_Login')) {
                 'text' => 'Login With ' . WP_OAuth_Integration_Factory::get_provider_name($this->provider),
                 'redirect' => false,
                 'class' => ''
-            );                        
-            
+            );
+
             $path = WP_OAuth_Integration_Factory::get_provider_img_button($this->provider) .'/includes/assets/img/oauth-button.png';
-            
+
             if (file_exists(PLUGINDIR . '/' . $path)){
                 $args['img'] = plugins_url() . '/' .$path;
             }
-            
+
             extract(shortcode_atts($args, $attributes));
 
             $auth_url = $this->get_auth_url($redirect);
@@ -331,7 +331,7 @@ if (!class_exists('WP_OAuth_Integration_Login')) {
 
             // User has specified text
             if (isset($attributes['text'])) {
-                return "<a href='" . $auth_url . "' class='$class'>" . $text . "</a>";
+                return "<a href='" . $auth_url . "' class='$class'><span>" . $text . "</span></a>";
             }
 
             // Default fields

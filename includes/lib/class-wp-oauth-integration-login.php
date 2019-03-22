@@ -147,7 +147,7 @@ if (!class_exists('WP_OAuth_Integration_Login')) {
             wp_set_current_user($user_id);
 
             // Store the user's access token as a meta object
-            update_user_meta($user_id, WP_OAuth_Integration_Factory::get_prefix($this->provider) . '_access_token', $this->access_token, true);
+            update_user_meta($user_id, WP_OAuth_Integration_Factory::get_prefix($this->provider) . '_access_token', $this->access_token);
 
             // Do action hook that user has authenticated his OAuth account for developers to hook into
             do_action(WP_OAuth_Integration_Factory::get_prefix($this->provider) . '_authenticated', $user_id);

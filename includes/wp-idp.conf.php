@@ -65,6 +65,7 @@ class Plugin_Config {
             $decoded_data = json_decode($profile_data);
 
             $is_begeleider = (strpos($decoded_data->result->accountType, 'begeleider') !== false);
+            $is_begeleider |= (strpos($decoded_data->result->accountType, 'ondersteuning') !== false);
             $lastname = trim($decoded_data->result->middleName . ' ' . $decoded_data->result->lastName);
 
             // Return result

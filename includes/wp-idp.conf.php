@@ -40,16 +40,16 @@ class Plugin_Config {
     public static $plugin_url;
 
     // Define authorize URL
-    public static $authorize_url = 'https://idp.djoamersfoort.nl/oauth/authorize';
+    public static $authorize_url = 'https://leden.djoamersfoort.nl/o/authorize/';
 
     // Define token URL
-    public static $token_url = 'https://idp.djoamersfoort.nl/oauth/token';
+    public static $token_url = 'https://leden.djoamersfoort.nl/o/token/';
 
     // Define API Base URL
-    public static $base_url = 'https://idp.djoamersfoort.nl/api/primus';
+    public static $base_url = 'https://leden.djoamersfoort.nl/api/v1/member/details';
 
     // Define the URL to create OAuth application for this provider
-    public static $apps_url = 'https://idp.djoamersfoort.nl/apps/create';
+    public static $apps_url = 'https://leden.djoamersfoort.nl/o/applications';
 
     // Define our preferred HTTP authentication method
     public static $http_auth_method = 'POST';
@@ -58,26 +58,26 @@ class Plugin_Config {
     public static $access_token_name = 'access_token';
 
     // The URL at which to retrieve the user profile
-    public static $profile_url = 'https://idp.djoamersfoort.nl/api/primus/user/all';
+    public static $profile_url = 'https://leden.djoamersfoort.nl/api/v1/member/details';
 
     // Parses and returns back profile data
     public static function parse_profile_data($profile_data) {
             $decoded_data = json_decode($profile_data);
 
-            $is_begeleider = (strpos($decoded_data->result->accountType, 'begeleider') !== false);
-            $is_begeleider |= (strpos($decoded_data->result->accountType, 'ondersteuning') !== false);
-            $lastname = trim($decoded_data->result->middleName . ' ' . $decoded_data->result->lastName);
+            $is_begeleider = (strpos($decoded_data->accountType, 'begeleider') !== false);
+            $is_begeleider |= (strpos($decoded_data->accountType, 'ondersteuning') !== false);
+            $lastname = $decoded_data->lastName;
 
             // Return result
             return array(
-                'oauth_id'          => $decoded_data->result->id,
+                'oauth_id'          => $decoded_data->id,
                 'oauth_username'    => '',
-                'first_name'        => $decoded_data->result->firstName,
+                'first_name'        => $decoded_data->firstName,
                 'last_name'         => $is_begeleider ? $lastname : '',
                 'description'       => '',
                 'user_url'          => '',
                 'profile_picture'   => '',
-                'email'             => $decoded_data->result->email,
+                'email'             => $decoded_data->email,
             );
     }
 

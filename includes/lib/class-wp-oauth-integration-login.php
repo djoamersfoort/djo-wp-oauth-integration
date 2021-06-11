@@ -78,7 +78,7 @@ if (!class_exists('WP_OAuth_Integration_Login')) {
         public function get_auth_url($redirect = false) {
 
             $state = wp_generate_password(12, false);
-            $authorize_url = $this->oauth->authorizeUrl(array('scope' => 'user/basic user/names user/email user/account-type',
+            $authorize_url = $this->oauth->authorizeUrl(array('scope' => 'user/basic user/names user/email',
                 'state' => $state));
 
             // Store redirect URL in session

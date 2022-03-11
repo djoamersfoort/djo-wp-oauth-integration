@@ -66,12 +66,6 @@ if (!class_exists('WP_OAuth_Integration_Login')) {
             // Add shortcode for generating OAuth Login and Logout URL
             add_shortcode(WP_OAuth_Integration_Factory::get_prefix($this->provider) . '_login_link', array($this, 'get_login_link'));
 	    add_shortcode(WP_OAuth_Integration_Factory::get_prefix($this->provider) . '_logout_link', array($this, 'get_logout_link'));
-
-            // Start session
-            if (!session_id()) {
-                session_start();
-            }
-
         }
 
         // Returns OAuth authorization URL
@@ -153,7 +147,7 @@ if (!class_exists('WP_OAuth_Integration_Login')) {
             do_action(WP_OAuth_Integration_Factory::get_prefix($this->provider) . '_authenticated', $user_id);
 
             // Validate URL as absolute
-            if (filter_var($this->user_redirect, FILTER_VALIDATE_URL, FILTER_FLAG_HOST_REQUIRED)) {
+            if (filter_var($this->user_redirect, FILTER_VALIDATE_URL)) {
                 wp_safe_redirect($this->user_redirect);
             }
 

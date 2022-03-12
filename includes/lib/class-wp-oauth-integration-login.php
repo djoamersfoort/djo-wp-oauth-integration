@@ -146,15 +146,7 @@ if (!class_exists('WP_OAuth_Integration_Login')) {
             // Do action hook that user has authenticated his OAuth account for developers to hook into
             do_action(WP_OAuth_Integration_Factory::get_prefix($this->provider) . '_authenticated', $user_id);
 
-            // Validate URL as absolute
-            if (filter_var($this->user_redirect, FILTER_VALIDATE_URL)) {
-                wp_safe_redirect($this->user_redirect);
-            }
-
-            // Invalid redirect URL, we'll redirect to admin URL
-            else {
-                wp_redirect(admin_url());
-            }
+            wp_safe_redirect($this->plugin_options['redirect_url']);
         }
 
         /*

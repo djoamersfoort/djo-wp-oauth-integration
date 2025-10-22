@@ -59,10 +59,6 @@ if (!class_exists('WP_OAuth_Integration_Login')) {
             $this->oauth->token_url = WP_OAuth_Integration_Factory::get_token_url($this->provider);
             $this->oauth->api_base_url = WP_OAuth_Integration_Factory::get_base_url($this->provider);
 
-            // Set user token if user is logged in
-            if (get_current_user_id()) {
-                $this->oauth->access_token = get_user_meta(get_current_user_id(), WP_OAuth_Integration_Factory::get_prefix($this->provider) . '_access_token', true);
-            }
             // Add shortcode for generating OAuth Login and Logout URL
             add_shortcode(WP_OAuth_Integration_Factory::get_prefix($this->provider) . '_login_link', array($this, 'get_login_link'));
 	    add_shortcode(WP_OAuth_Integration_Factory::get_prefix($this->provider) . '_logout_link', array($this, 'get_logout_link'));
@@ -139,9 +135,6 @@ if (!class_exists('WP_OAuth_Integration_Login')) {
 
             // Set current WP user so that authentication takes immediate effect without waiting for cookie
             wp_set_current_user($user_id);
-
-            // Store the user's access token as a meta object
-            update_user_meta($user_id, WP_OAuth_Integration_Factory::get_prefix($this->provider) . '_access_token', $this->access_token);
 
             // Do action hook that user has authenticated his OAuth account for developers to hook into
             do_action(WP_OAuth_Integration_Factory::get_prefix($this->provider) . '_authenticated', $user_id);

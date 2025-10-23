@@ -54,8 +54,6 @@ if (!class_exists('WP_OAuth_Integration_Client')) {
 
         public $curl_ssl_verifypeer = false;
 
-        public $curl_header = array();
-
         public $curl_useragent = "OAuth/2 Simple PHP Client v0.1; HybridAuth http://hybridauth.sourceforge.net/";
 
         public $curl_proxy = null;
@@ -165,13 +163,13 @@ if (!class_exists('WP_OAuth_Integration_Client')) {
                 $url = $this->api_base_url . $url;
             }
 
-            $parameters[WP_OAuth_Integration_Factory::get_access_token_name($this->provider)] = $this->access_token;
+            $headers = array("Authorization" => "Bearer " . $this->access_token);
             $response = null;
 
             switch ($method) {
-                case 'GET' : $response = $this->request($url, $parameters, "GET");
+                case 'GET' : $response = $this->request($url, $parameters, "GET", $headers);
                     break;
-                case 'POST' : $response = $this->request($url, $parameters, "POST");
+                case 'POST' : $response = $this->request($url, $parameters, "POST", $headers);
                     break;
             }
 
@@ -225,12 +223,12 @@ if (!class_exists('WP_OAuth_Integration_Client')) {
         }
 
         // Perform a request
-        private function request($url, $params = false, $type = "GET") {        
+        private function request($url, $params = false, $type = "GET", $headers = array()) {
             $args = array(
                 'timeout'   => $this->curl_time_out,
                 'user-agent' => $this->curl_useragent,
                 'sslverify' => $this->curl_ssl_verifypeer,
-                'headers' => $this->curl_header,
+                'headers' => $headers,
             );
             
             if ($type == "GET") {                

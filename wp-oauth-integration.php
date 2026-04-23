@@ -22,9 +22,6 @@ class WP_OAuth_Integration {
     private $profile_url;
 
     public function __construct() {
-        if (!session_id() && !headers_sent()) {
-            session_start();
-        }
         $this->options = get_option($this->option_name);
         $this->client_id = isset($this->options['api_key']) ? $this->options['api_key'] : '';
         $this->client_secret = isset($this->options['api_secret']) ? $this->options['api_secret'] : '';
@@ -35,6 +32,7 @@ class WP_OAuth_Integration {
         add_action('admin_menu', array($this, 'add_admin_menu'));
         add_action('admin_init', array($this, 'init_settings'));
         add_action('login_form', array($this, 'display_login_button'));
+        add_action('init', array($this, 'handle_redirector'));
         add_action('init', array($this, 'process_login'));
 
         add_shortcode($this->prefix . '_login_link', array($this, 'shortcode_login_link'));
@@ -90,20 +88,35 @@ class WP_OAuth_Integration {
     // --- OAuth Logic ---
 
     public function get_auth_url($redirect = '') {
-        $code_verifier = wp_generate_password(64, false);
-        $code_challenge = str_replace('=', '', strtr(base64_encode(hash('sha256', $code_verifier, true)), '+/', '-_'));
-        $state = wp_generate_password(16, false);
-
-        set_transient($this->prefix . '_cv_' . $state, $code_verifier, 300);
-        if ($redirect) {
-            set_transient($this->prefix . '_rd_' . $state, $redirect, 300);
-        }
-
-        $_SESSION[$this->prefix . '_state'] = $state;
-
         if (empty($this->auth_url)) {
             return '#error_auth_url_not_set';
         }
+        $url = add_query_arg('action', $this->prefix . '_redirect', wp_login_url());
+        if ($redirect) {
+            $url = add_query_arg('redirect_to', $redirect, $url);
+        }
+        return $url;
+    }
+
+    public function handle_redirector() {
+        if (!isset($_GET['action']) || $_GET['action'] !== $this->prefix . '_redirect') {
+            return;
+        }
+
+        if (empty($this->auth_url)) {
+            wp_die('Authorize URL not configured.');
+        }
+
+        $state = wp_generate_password(16, false);
+        $code_verifier = wp_generate_password(64, false);
+        $code_challenge = str_replace('=', '', strtr(base64_encode(hash('sha256', $code_verifier, true)), '+/', '-_'));
+
+        set_transient($this->prefix . '_cv_' . $state, $code_verifier, 300);
+        if (isset($_GET['redirect_to'])) {
+            set_transient($this->prefix . '_rd_' . $state, esc_url_raw($_GET['redirect_to']), 300);
+        }
+
+        setcookie($this->prefix . '_state', $state, time() + 300, COOKIEPATH, COOKIE_DOMAIN, is_ssl(), true);
 
         $params = array(
             'client_id' => $this->client_id,
@@ -114,7 +127,8 @@ class WP_OAuth_Integration {
             'code_challenge' => $code_challenge,
             'code_challenge_method' => 'S256'
         );
-        return $this->auth_url . '?' . http_build_query($params);
+        wp_redirect(add_query_arg($params, $this->auth_url));
+        exit;
     }
 
     public function process_login() {
@@ -123,8 +137,8 @@ class WP_OAuth_Integration {
         }
 
         $state = $_GET['state'];
-        $saved_state = isset($_SESSION[$this->prefix . '_state']) ? $_SESSION[$this->prefix . '_state'] : '';
-        unset($_SESSION[$this->prefix . '_state']);
+        $saved_state = isset($_COOKIE[$this->prefix . '_state']) ? $_COOKIE[$this->prefix . '_state'] : '';
+        setcookie($this->prefix . '_state', '', time() - 3600, COOKIEPATH, COOKIE_DOMAIN, is_ssl(), true);
 
         if (empty($saved_state) || $state !== $saved_state) {
             wp_die('Invalid state. Potential CSRF detected.');

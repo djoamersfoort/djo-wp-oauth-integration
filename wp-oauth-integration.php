@@ -225,18 +225,18 @@ class WP_OAuth_Integration {
     // --- UI & Shortcodes ---
 
     public function display_login_button() {
-        echo '<p><a href="' . $this->get_auth_url() . '" class="button">Login with DJO IDP</a></p>';
+        echo '<p><a href="' . esc_url($this->get_auth_url()) . '" class="button">Login with DJO IDP</a></p>';
     }
 
     public function shortcode_login_link($atts) {
         if (is_user_logged_in()) return $this->shortcode_logout_link($atts);
         $atts = shortcode_atts(array('text' => 'Login with DJO IDP', 'redirect' => ''), $atts);
-        return '<a href="' . $this->get_auth_url($atts['redirect']) . '">' . esc_html($atts['text']) . '</a>';
+        return '<a href="' . esc_url($this->get_auth_url($atts['redirect'])) . '">' . esc_html($atts['text']) . '</a>';
     }
 
     public function shortcode_logout_link($atts) {
         $atts = shortcode_atts(array('text' => 'Logout'), $atts);
-        return '<a href="' . wp_logout_url(home_url('/')) . '">' . esc_html($atts['text']) . '</a>';
+        return '<a href="' . esc_url(wp_logout_url(home_url('/'))) . '">' . esc_html($atts['text']) . '</a>';
     }
 }
 
